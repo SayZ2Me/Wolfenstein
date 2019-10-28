@@ -4,15 +4,17 @@ import Loader,Objects,math,time
 
 closed = False
 
-ScrnSize = Objects.point(1280,800)
+ScrnSize = Objects.point(1280,720)
 
-PlRaysQuant = 640
+PlRaysQuant = 160
+
+ColWidth = ScrnSize.x / PlRaysQuant
 
 PlFOW = 60
 
 Key = ''
 
-UiScale = 200
+UiScale = 50
 
 def DrawCoordGrid(canvas):
     canvas.create_line(0,0,ScrnSize.x * UiScale,0,fill="blue",width=10)
@@ -25,15 +27,24 @@ def DrawPlayer(canvas,Player,Level):
     create_circle(canvas,Player.position.x,Player.position.y,0.1)
     for ray in Player.rays:
         data = Objects.ray_cast(Player.position.x,Player.position.y,ray,Level)
-        #canvas.create_line(Player.position.x * UiScale,Player.position.y * UiScale,data[0] * UiScale,data[1] * UiScale,fill='red', width=1)
-        #canvas.create_line(Player.position.x * UiScale,Player.position.y * UiScale,data[2] * UiScale,data[3] * UiScale,fill='blue', width=1)
-    
+        canvas.create_line(Player.position.x * UiScale,Player.position.y * UiScale,data[1] * UiScale,data[2] * UiScale,fill='red', width=1)
+        
+def DrawFrame(canvas,Player,Level):
+    i=0
+    for ray in Player.rays:
+        data = Objects.ray_cast(Player.position.x,Player.position.y,ray,Level)
+        x=data[1]
+        y=data[2]
+        d=data[4]*1.2
+        canvas.create_rectangle(i*ColWidth, (ScrnSize.y/2-ScrnSize.y/d) ,i*ColWidth+ColWidth ,(ScrnSize.y/2+ScrnSize.y/d),fill='#%02x%02x%02x' % (round(255/(d+1)), round(255/(d+1)), round(255/(d+1))), outline='')
+        i+=1
+        
 def DrawMap(canvas,Level):
     i,j=0,0
     for row in Level.ids:
         for el in row:
             if(el != 0):
-                canvas.create_rectangle((j-0.5) * UiScale,(i-0.5) * UiScale,(j+0.5) * UiScale,(i+0.5) * UiScale,fill='black',outline='white')
+                canvas.create_rectangle((i-0.5) * UiScale,(j-0.5) * UiScale,(i+0.5) * UiScale,(j+0.5) * UiScale,fill='black',outline='white')
             j+=1
         j=0
         i+=1
@@ -77,21 +88,18 @@ while not closed:
     t = time.time()
     if(Key != ''):
         if(Key == 'Right'):
-            Player.rotate(5)
+            Player.rotate(6)
         if(Key == 'Left'):
-            Player.rotate(-5)
+            Player.rotate(-6)
         if(Key == 'Up'):
-            Player.move(1)
+            Player.move(1,Level)
         if(Key == 'Down'):
-            Player.move(-1)
+            Player.move(-1,Level)
     
     window.delete("all")
-        
-    DrawMap(window,Level)
-    
-    DrawCoordGrid(window)
-    
-    DrawPlayer(window,Player,Level)
+
+    DrawFrame(window,Player,Level)
     
     root.update()
-    print(time.time()-t)
+    while(time.time() - t < 0.033):
+        pass
