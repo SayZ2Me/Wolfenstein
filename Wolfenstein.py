@@ -1,53 +1,42 @@
 from tkinter import *
-from PIL import Image
+from PIL import Image,ImageTk
 import Loader,Objects,math,time
 
 closed = False
 
 ScrnSize = Objects.point(1280,720)
 
-PlRaysQuant = 160
+ColWidth = 4
 
-ColWidth = ScrnSize.x / PlRaysQuant
+PlRaysQuant = int(ScrnSize.x/ColWidth)
 
-PlFOW = 60
+PlFOW = 50
 
 Key = ''
 
-UiScale = 50
+UiScale = 10
 
-def DrawCoordGrid(canvas):
-    canvas.create_line(0,0,ScrnSize.x * UiScale,0,fill="blue",width=10)
-    canvas.create_line(0,0,0,ScrnSize.y * UiScale,fill="red",width=10)
-
-def create_circle(canvas,x,y,r):
-    canvas.create_oval((x-r) * UiScale,(y-r) * UiScale,(x+r) * UiScale,(y+r) * UiScale,fill="black", outline="white", width=1)
-
-def DrawPlayer(canvas,Player,Level):
-    create_circle(canvas,Player.position.x,Player.position.y,0.1)
-    for ray in Player.rays:
-        data = Objects.ray_cast(Player.position.x,Player.position.y,ray,Level)
-        canvas.create_line(Player.position.x * UiScale,Player.position.y * UiScale,data[1] * UiScale,data[2] * UiScale,fill='red', width=1)
-        
 def DrawFrame(canvas,Player,Level):
+    render = Image.new('RGBA', (ScrnSize.x, ScrnSize.y))
+    global WallSprites
     i=0
     for ray in Player.rays:
-        data = Objects.ray_cast(Player.position.x,Player.position.y,ray,Level)
-        x=data[1]
-        y=data[2]
-        d=data[4]*1.2
-        canvas.create_rectangle(i*ColWidth, (ScrnSize.y/2-ScrnSize.y/d) ,i*ColWidth+ColWidth ,(ScrnSize.y/2+ScrnSize.y/d),fill='#%02x%02x%02x' % (round(255/(d+1)), round(255/(d+1)), round(255/(d+1))), outline='')
-        i+=1
         
-def DrawMap(canvas,Level):
-    i,j=0,0
-    for row in Level.ids:
-        for el in row:
-            if(el != 0):
-                canvas.create_rectangle((i-0.5) * UiScale,(j-0.5) * UiScale,(i+0.5) * UiScale,(j+0.5) * UiScale,fill='black',outline='white')
-            j+=1
-        j=0
+        data = Objects.ray_cast(Player.position.x,Player.position.y,ray,Level)
+        
+        var = data[1]%1
+        
+        ImgBuf = WallSprites[data[2]*2 - data[0]][round(63*var-32)]
+        
+        ImgBuf = ImgBuf.resize((ColWidth,int(ScrnSize.y/data[3]*2)), resample=Image.NEAREST)
+        
+        render.paste(ImgBuf, (i*ColWidth,int(ScrnSize.y/2-ScrnSize.y/data[3])))
+
         i+=1
+    
+    img = ImageTk.PhotoImage(render)
+    
+    return img
         
 def OnDestroy():
     global closed
@@ -73,16 +62,13 @@ root.bind_all('<KeyRelease>',keyRel)
 window = Canvas(root,width = ScrnSize.x,height = ScrnSize.y,bg='grey')
 window.pack()
 
-Player = Objects.player(1,1,0,PlFOW,PlRaysQuant)
+Player = Objects.player(49,33,0,PlFOW,PlRaysQuant)
 
-Player.rotate(0.1)
+Player.rotate(-90)
 
 Level = Loader.map(1)
 
-for row in Level.ids:
-    print(row)
-
-WallSprites = Loader.GetSprites()
+WallSprites = Loader.GetSlicedSprites(ColWidth,ScrnSize.y)
 
 while not closed:
     t = time.time()
@@ -92,14 +78,15 @@ while not closed:
         if(Key == 'Left'):
             Player.rotate(-6)
         if(Key == 'Up'):
-            Player.move(1,Level)
+            Player.move(3,Level)
         if(Key == 'Down'):
-            Player.move(-1,Level)
+            Player.move(-3,Level)
     
     window.delete("all")
 
-    DrawFrame(window,Player,Level)
-    
+    Frame = DrawFrame(window,Player,Level)
+    window.create_image(0, 0, anchor=NW, image=Frame)
     root.update()
+    root.title("Wolfenstein3D FPS "+str(round(1/(time.time() - t),2)))
     while(time.time() - t < 0.033):
         pass
