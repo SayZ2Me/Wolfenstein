@@ -92,9 +92,15 @@ def ray_cast(x,y,ray,Level):
         FhC=point(x - dy / math.tan(math.pi-angle+0.0000001),y + dy)
 
         IncVx=-1
+<<<<<<< Updated upstream
         IncVy=1 / math.tan(angle-math.pi/2+0.0000001)
             
         IncHx=-(1 / math.tan(math.pi-angle+0.0000001))
+=======
+        IncVy=1 / math.tan(angle-math.pi/2+0.000001)
+            
+        IncHx=-(1 / math.tan(math.pi-angle+0.000001))
+>>>>>>> Stashed changes
         IncHy=1
         
         dx=-0.5
@@ -137,21 +143,38 @@ def ray_cast(x,y,ray,Level):
                 
         hd=math.sqrt((FhC.x - x) * (FhC.x - x) + (FhC.y - y) * (FhC.y - y))
                   
+<<<<<<< Updated upstream
         if vd < hd:
             if(Level.ids[round(FvC.x+dx)][round(FvC.y)]!=0):
                 data.append(1)
+=======
+        if(vd) < (hd):
+            if(Level.ids[round(FvC.x+dx)][round(FvC.y)]>0):
+                data.append(0)
+>>>>>>> Stashed changes
                 data.append(FvC.y)
-                data.append(Level.ids[round(FvC.x+dx)][round(FvC.y)])
+                if(Level.ids[round(FvC.x)][round(FvC.y+1)]==-1):
+                    data.appned(51)
+                else:
+                    data.append(Level.ids[round(FvC.x+dx)][round(FvC.y)])
                 data.append(vd)
                 return data
             else:
                 FvC.x+=IncVx
                 FvC.y+=IncVy
         else:
+<<<<<<< Updated upstream
             if(Level.ids[round(FhC.x)][round(FhC.y+dy)]!=0):
                 data.append(0)
+=======
+            if(Level.ids[round(FhC.x)][round(FhC.y+dy)]>0):
+                data.append(1)
+>>>>>>> Stashed changes
                 data.append(FhC.x)
-                data.append(Level.ids[round(FhC.x)][round(FhC.y+dy)])
+                if(Level.ids[round(FhC.x)][round(FhC.y)]==-1):
+                    data.append(51)
+                else:
+                    data.append(Level.ids[round(FhC.x)][round(FhC.y+dy)])
                 data.append(hd)
                 return data
             else:
