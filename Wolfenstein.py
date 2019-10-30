@@ -16,6 +16,10 @@ Key = ''
 
 UiScale = 10
 
+move = 0
+
+rotate = 0
+
 def DrawFrame(canvas,Player,Level):
     render = Image.new('RGBA', (ScrnSize.x, ScrnSize.y))
     global WallSprites
@@ -44,21 +48,36 @@ def OnDestroy():
     root.quit()
     root.destroy()
 
-def key(event):
-    global Key
-    Key=event.keysym
+def keyPressHandler(event):
     
-def keyRel(event):
-    global Key
-    Key=''
-
+    global move
+    global rotate
+    
+    if(event.keysym=='Up'):
+        move = 3
+    if(event.keysym=='Down'):
+        move = -3
+    if(event.keysym=='Left'):
+        rotate = -6
+    if(event.keysym=='Right'):
+        rotate = 6
+def keyReleaseHandler(event):
+    global move
+    global rotate
+    
+    if(event.keysym=='Up' or event.keysym=='Down'):
+        move = 0
+    if(event.keysym=='Left' or event.keysym=='Right'):
+        rotate = 0
+    
+    
 root = Tk()
 root.geometry("{}x{}".format(ScrnSize.x,ScrnSize.y))
 root.protocol("WM_DELETE_WINDOW",OnDestroy)
 root.title("Wolfenstein3D")
 root.resizable(0, 0)
-root.bind_all('<KeyPress>',key)
-root.bind_all('<KeyRelease>',keyRel)
+root.bind_all('<KeyPress>',keyPressHandler)
+root.bind_all('<KeyRelease>',keyReleaseHandler)
 window = Canvas(root,width = ScrnSize.x,height = ScrnSize.y,bg='grey')
 window.pack()
 
@@ -72,15 +91,11 @@ WallSprites = Loader.GetSlicedSprites(ColWidth,ScrnSize.y)
 
 while not closed:
     t = time.time()
-    if(Key != ''):
-        if(Key == 'Right'):
-            Player.rotate(6)
-        if(Key == 'Left'):
-            Player.rotate(-6)
-        if(Key == 'Up'):
-            Player.move(3,Level)
-        if(Key == 'Down'):
-            Player.move(-3,Level)
+
+    if(move!=0):
+        Player.move(move,Level)
+    if(rotate!=0):
+        Player.rotate(rotate)
     
     window.delete("all")
 
@@ -88,5 +103,5 @@ while not closed:
     window.create_image(0, 0, anchor=NW, image=Frame)
     root.update()
     root.title("Wolfenstein3D FPS "+str(round(1/(time.time() - t),2)))
-    while(time.time() - t < 0.033):
+    while(time.time() - t < 0.05):
         pass

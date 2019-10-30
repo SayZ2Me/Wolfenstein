@@ -68,7 +68,7 @@ def ray_cast(x,y,ray,Level):
     IncHy=0
 
     
-    if(angle >= 0 and angle <= math.pi/2):
+    if(angle >= 0 and angle < math.pi/2):
         dx=round(x) + 0.5 - x
         dy=round(y) + 0.5 - y
 
@@ -84,23 +84,23 @@ def ray_cast(x,y,ray,Level):
         dx=0.5
         dy=0.5
 
-    if(angle > math.pi/2 and angle <= math.pi):
+    if(angle >= math.pi/2 and angle < math.pi):
         dx=abs(round(x) - 0.5 - x)
         dy=round(y) + 0.5 - y
 
-        FvC=point(x - dx,y + dx / math.tan(angle-math.pi/2)+0.000001)
-        FhC=point(x - dy / math.tan(math.pi-angle+0.000001),y + dy)
+        FvC=point(x - dx,y + dx / math.tan(angle-math.pi/2+0.0000001))
+        FhC=point(x - dy / math.tan(math.pi-angle+0.0000001),y + dy)
 
         IncVx=-1
-        IncVy=1 / math.tan(angle-math.pi/2)
+        IncVy=1 / math.tan(angle-math.pi/2+0.0000001)
             
-        IncHx=-(1 / math.tan(math.pi-angle))
+        IncHx=-(1 / math.tan(math.pi-angle+0.0000001))
         IncHy=1
         
         dx=-0.5
         dy=0.5
 
-    if(angle > math.pi and angle <= math.pi*3/2):
+    if(angle >= math.pi and angle < math.pi*3/2):
         dx=abs(round(x) - 0.5 - x)
         dy=abs(round(y) - 0.5 - y)
 
@@ -116,7 +116,7 @@ def ray_cast(x,y,ray,Level):
         dx=-0.5
         dy=-0.5
     
-    if(angle > math.pi*3/2 and angle <= 2*math.pi):
+    if(angle >= math.pi*3/2 and angle < 2*math.pi):
         dx=round(x) + 0.5 - x
         dy=abs(round(y) - 0.5 - y)
 
@@ -137,9 +137,9 @@ def ray_cast(x,y,ray,Level):
                 
         hd=math.sqrt((FhC.x - x) * (FhC.x - x) + (FhC.y - y) * (FhC.y - y))
                   
-        if(vd) < (hd):
+        if vd < hd:
             if(Level.ids[round(FvC.x+dx)][round(FvC.y)]!=0):
-                data.append(0)
+                data.append(1)
                 data.append(FvC.y)
                 data.append(Level.ids[round(FvC.x+dx)][round(FvC.y)])
                 data.append(vd)
@@ -149,7 +149,7 @@ def ray_cast(x,y,ray,Level):
                 FvC.y+=IncVy
         else:
             if(Level.ids[round(FhC.x)][round(FhC.y+dy)]!=0):
-                data.append(1)
+                data.append(0)
                 data.append(FhC.x)
                 data.append(Level.ids[round(FhC.x)][round(FhC.y+dy)])
                 data.append(hd)
