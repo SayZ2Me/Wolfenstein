@@ -16,9 +16,7 @@ class map():
             i+=1
 
 def GetSlicedSprites(w,h):
-    render = Image.new('RGBA', (64, 64))
-
-    Source = Image.open('Wolfenstein3DWalls.png')
+    Source = Image.open('Walls.png')
     
     Walls = []
 
@@ -34,7 +32,7 @@ def GetSlicedSprites(w,h):
     for Wall in Walls:
         WallsSliced.append([])
         for j in range(int(64)):
-            WallsSliced[i].append(Image.new('RGBA', (1, 64)))
+            WallsSliced[i].append(Image.new('RGB', (1, 64)))
             WallsSliced[i][j].paste(Wall.crop((j,0,j+1,64)))
             WallsSliced[i][j]=WallsSliced[i][j].resize((1,h), resample=Image.NEAREST)
         i+=1

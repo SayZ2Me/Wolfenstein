@@ -35,7 +35,7 @@ class player():
             data = ray_cast(self.position.x,self.position.y,self.Forward,Level)
             self.Forward.direction-=math.pi
             self.Forward.direction%=math.pi*2
-        if(data[3]>0.5):
+        if(data[3]>1):
             self.position.x += 0.1 * math.cos(self.Forward.direction)*direction
             self.position.y += 0.1 * math.sin(self.Forward.direction)*direction
             
@@ -59,8 +59,8 @@ def ray_cast(x,y,ray,Level):
     dx=0
     dy=0
 
-    FvC=0
-    FhC=0
+    FvC=point(0,0)
+    FhC=point(0,0)
     
     IncVx=0
     IncVy=0
@@ -92,15 +92,9 @@ def ray_cast(x,y,ray,Level):
         FhC=point(x - dy / math.tan(math.pi-angle+0.0000001),y + dy)
 
         IncVx=-1
-<<<<<<< Updated upstream
-        IncVy=1 / math.tan(angle-math.pi/2+0.0000001)
-            
-        IncHx=-(1 / math.tan(math.pi-angle+0.0000001))
-=======
         IncVy=1 / math.tan(angle-math.pi/2+0.000001)
             
         IncHx=-(1 / math.tan(math.pi-angle+0.000001))
->>>>>>> Stashed changes
         IncHy=1
         
         dx=-0.5
@@ -139,22 +133,17 @@ def ray_cast(x,y,ray,Level):
         dy=-0.5
 
     while True:
+        
         vd=math.sqrt((FvC.x - x) * (FvC.x - x) + (FvC.y - y) * (FvC.y - y))
                 
         hd=math.sqrt((FhC.x - x) * (FhC.x - x) + (FhC.y - y) * (FhC.y - y))
                   
-<<<<<<< Updated upstream
         if vd < hd:
-            if(Level.ids[round(FvC.x+dx)][round(FvC.y)]!=0):
-                data.append(1)
-=======
-        if(vd) < (hd):
             if(Level.ids[round(FvC.x+dx)][round(FvC.y)]>0):
-                data.append(0)
->>>>>>> Stashed changes
+                data.append(1)
                 data.append(FvC.y)
-                if(Level.ids[round(FvC.x)][round(FvC.y+1)]==-1):
-                    data.appned(51)
+                if(Level.ids[round(FvC.x-dx)][round(FvC.y)]==-1):
+                    data.append(51)
                 else:
                     data.append(Level.ids[round(FvC.x+dx)][round(FvC.y)])
                 data.append(vd)
@@ -163,13 +152,8 @@ def ray_cast(x,y,ray,Level):
                 FvC.x+=IncVx
                 FvC.y+=IncVy
         else:
-<<<<<<< Updated upstream
-            if(Level.ids[round(FhC.x)][round(FhC.y+dy)]!=0):
-                data.append(0)
-=======
             if(Level.ids[round(FhC.x)][round(FhC.y+dy)]>0):
-                data.append(1)
->>>>>>> Stashed changes
+                data.append(0)
                 data.append(FhC.x)
                 if(Level.ids[round(FhC.x)][round(FhC.y)]==-1):
                     data.append(51)

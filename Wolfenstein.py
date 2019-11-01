@@ -6,11 +6,11 @@ closed = False
 
 ScrnSize = Objects.point(1280,720)
 
-ColWidth = 4
+ColWidth = 2
 
 PlRaysQuant = int(ScrnSize.x/ColWidth)
 
-PlFOW = 50
+PlFOW = 55
 
 Key = ''
 
@@ -78,7 +78,7 @@ root.title("Wolfenstein3D")
 root.resizable(0, 0)
 root.bind_all('<KeyPress>',keyPressHandler)
 root.bind_all('<KeyRelease>',keyReleaseHandler)
-window = Canvas(root,width = ScrnSize.x,height = ScrnSize.y,bg='grey')
+window = Canvas(root,width = ScrnSize.x,height = ScrnSize.y,bg='#404040')
 window.pack()
 
 Player = Objects.player(49,33,0,PlFOW,PlRaysQuant)
@@ -98,7 +98,7 @@ while not closed:
         Player.rotate(rotate)
     
     window.delete("all")
-
+    window.create_rectangle(0,ScrnSize.y/2,ScrnSize.x,ScrnSize.y,fill='#b0b0b0')
     Frame = DrawFrame(window,Player,Level)
     window.create_image(0, 0, anchor=NW, image=Frame)
     root.update()
